@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.devilyang.musicstation.indicator.TabPageIndicator 
+        android:id="@+id/vhart_indicator"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:background="@android:color/black"
+        ></com.devilyang.musicstation.indicator.TabPageIndicator>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vchart_pager"
+        android:layout_below="@id/vhart_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        ></android.support.v4.view.ViewPager>
+	<ProgressBar 
+	    android:id="@+id/vchart_progress"
+	    android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    style="@android:style/Widget.Holo.ProgressBar.Large"
+	    android:visibility="visible"
+	    android:layout_centerInParent="true"/>
+
+    
+</RelativeLayout>

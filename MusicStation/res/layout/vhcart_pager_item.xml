@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white" >
+
+    
+    <RelativeLayout 
+        android:id="@+id/period_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:background="@android:color/black">
+        <ImageView 
+            android:id="@+id/vchart_left_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/period_left_selector"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/vchart_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+        <ImageView 
+            android:id="@+id/vchart_right_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/period_right_selector"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:focusable="true"/>
+
+    </RelativeLayout>
+	<ListView 
+	    android:id="@+id/vchart_list"
+	    android:layout_below="@id/period_layout"
+	    android:layout_height="wrap_content"
+	    android:layout_width="match_parent"
+	    android:scrollbars="none"></ListView>
+	<ProgressBar 
+	    android:id="@+id/vchart_list_progress"
+	    android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    style="@android:style/Widget.Holo.ProgressBar.Large"
+	    android:visibility="visible"
+	    android:layout_centerInParent="true"/>
+</RelativeLayout>

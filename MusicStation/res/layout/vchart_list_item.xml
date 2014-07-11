@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal">
+        <com.android.volley.toolbox.NetworkImageView 
+            android:id="@+id/poster_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/title_mv"/>
+        <TextView 
+            android:id="@+id/vchart_number"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:textColor="@android:color/white"/>
+        <RelativeLayout 
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="15dp"
+            android:orientation="vertical">
+            <TextView 
+                android:id="@+id/title_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textColor="@android:color/white"/>
+            <TextView 
+                android:id="@+id/author_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/title_name"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/green_light"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>

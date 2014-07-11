@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@drawable/horizontaltitlebar_bg"
+    android:orientation="horizontal" >
+    
+    <TextView 
+        android:id="@+id/title_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
+        android:text="首页"/>
+	<ImageView 
+	    android:id="@+id/title_search_img"
+	    android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    android:background="@drawable/title_search_selector"
+	    android:layout_centerVertical="true"
+	    android:layout_alignParentRight="true"
+	    android:layout_marginRight="25dp"
+	    android:clickable="true"
+	    android:focusable="true"/>
+	<ImageView 
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/green_light"/>
+</RelativeLayout>

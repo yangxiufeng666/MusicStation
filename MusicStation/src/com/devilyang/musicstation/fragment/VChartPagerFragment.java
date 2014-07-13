@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -28,6 +29,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.devilyang.musicstation.DetailActivity;
 import com.devilyang.musicstation.R;
 import com.devilyang.musicstation.adapter.VChartListAdapter;
 import com.devilyang.musicstation.bean.VChartListBean;
@@ -121,6 +123,18 @@ public class VChartPagerFragment extends BaseFragment {
 				int y = periodTxt.getBottom() * 3 / 2;
 				int x = getActivity().getWindowManager().getDefaultDisplay().getWidth() / 4;
 				showPopupWindow(x,y);
+			}
+		});
+		vchartList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent();
+				intent.putExtra("id", videos.get(position).getId());
+				intent.putExtra("isRelativeVideo", true);
+				intent.setClass(getActivity(), DetailActivity.class);
+				getActivity().startActivity(intent);
 			}
 		});
 	}

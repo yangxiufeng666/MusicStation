@@ -21,9 +21,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class VChartFragment extends BaseFragment implements GetVChartInterface{
 	private static final String TAG = "VChartFragment";
@@ -31,6 +34,7 @@ public class VChartFragment extends BaseFragment implements GetVChartInterface{
 	private TabPageIndicator indicator;
 	private ViewPager viewPager;
 	private ProgressBar progressBar;
+	private TextView failTips;
 	private ArrayList<AreaBean> areaBeans = new ArrayList<AreaBean>();
 	private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 	private VChartPagerAdapter adapter;
@@ -49,12 +53,23 @@ public class VChartFragment extends BaseFragment implements GetVChartInterface{
 		return rootView;
 	}
 	private void findView(View view){
+		failTips = (TextView)view.findViewById(R.id.failed_tips);
 		indicator = (TabPageIndicator)view.findViewById(R.id.vhart_indicator);
 		viewPager = (ViewPager)view.findViewById(R.id.vchart_pager);
 		progressBar = (ProgressBar)view.findViewById(R.id.vchart_progress);
 		adapter = new VChartPagerAdapter(getChildFragmentManager(), fragments, areaBeans);
 		viewPager.setAdapter(adapter);
 		indicator.setViewPager(viewPager);
+		failTips.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				startLoadData();
+				failTips.setVisibility(View.GONE);
+				progressBar.setVisibility(View.VISIBLE);
+				return true;
+			}
+		});
 	}
 	private void startLoadData(){
 		executeRequest(new JsonArrayRequest(URLProviderUtil.getVChartAreasUrl(), responseListener(), errorSponseListener()), "getVChartArea");
@@ -111,6 +126,8 @@ public class VChartFragment extends BaseFragment implements GetVChartInterface{
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				LogUtil.e(TAG, "GET AREA fail RESPONSE = "+error.getLocalizedMessage());
+				progressBar.setVisibility(View.GONE);
+				failTips.setVisibility(View.VISIBLE);
 			}
 		};
 	}

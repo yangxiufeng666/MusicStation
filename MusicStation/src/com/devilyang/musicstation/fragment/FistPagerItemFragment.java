@@ -2,11 +2,13 @@ package com.devilyang.musicstation.fragment;
 
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.devilyang.musicstation.DetailActivity;
 import com.devilyang.musicstation.R;
 import com.devilyang.musicstation.bean.FirstPageBean;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.net.RequestManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -37,11 +39,23 @@ public class FistPagerItemFragment extends Fragment{
 				if("ACTIVITY".equalsIgnoreCase(bean.getType())){//活动相关
 					
 				}else if("VIDEO".equalsIgnoreCase(bean.getType())){//首播，点击进去显示MV描述，相关MV
-					
+					Intent intent = new Intent();
+					intent.putExtra("id", bean.getId());
+					intent.putExtra("isRelativeVideo", true);
+					intent.setClass(getActivity(), DetailActivity.class);
+					getActivity().startActivity(intent);
 				}else if("WEEK_MAIN_STAR".equalsIgnoreCase(bean.getType())){//(悦单)点击进去跟显示悦单详情一样
-					
+					Intent intent = new Intent();
+					intent.putExtra("id", bean.getId());
+					intent.putExtra("isRelativeVideo", false);
+					intent.setClass(getActivity(), DetailActivity.class);
+					getActivity().startActivity(intent);
 				}else if("PLAYLIST".equalsIgnoreCase(bean.getType())){//(悦单)点击进去跟显示悦单详情一样
-					
+					Intent intent = new Intent();
+					intent.putExtra("id", bean.getId());
+					intent.putExtra("isRelativeVideo", false);
+					intent.setClass(getActivity(), DetailActivity.class);
+					getActivity().startActivity(intent);
 				}
 			}
 		});

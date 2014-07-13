@@ -121,4 +121,45 @@ public class URLProviderUtil {
 				+ "&datecode="+dateCode;
 		return url;
 	}
+	/**
+	 * 获取相关MV
+	 * @param id
+	 * @return
+	 */
+	public static String getRelativeVideoListUrl(int id){
+		String url = "http://mapi.yinyuetai.com/video/show.json?deviceinfo="
+				+ "{\"aid\":\"10201022\",\"os\":\"Android\","
+				+ "\"ov\":"+"\""+ Util.getSystemversion() +"\""+","
+				+ "\"rn\":\"480*800\","
+				+ "\"dn\":"+"\""+Util.getPhoneModel()+"\""+","
+				+ "\"cr\":\"00000\","
+				+ "\"as\":"
+				+ "\"WIFI\","
+				+ "\"uid\":"
+				+ "\"bc8255b6efc478ce334ae187bdd20fd9\","
+				+ "\"clid\":110003000}"
+				+ "&relatedVideos=true"
+				+ "&id="+id;
+		return url;
+	}
+	/**
+	 * 通过id 获取某人的悦单
+	 * @param id
+	 * @return
+	 */
+	public static String getPeopleYueDanList(int id){
+		String url = "http://mapi.yinyuetai.com/playlist/show.json?deviceinfo="
+				+ "{\"aid\":\"10201022\",\"os\":\"Android\","
+				+ "\"ov\":"+"\""+ Util.getSystemversion() +"\""+","
+				+ "\"rn\":\"480*800\","
+				+ "\"dn\":"+"\""+Util.getPhoneModel()+"\""+","
+				+ "\"cr\":\"00000\","
+				+ "\"as\":"
+				+ "\"WIFI\","
+				+ "\"uid\":"
+				+ "\"bc8255b6efc478ce334ae187bdd20fd9\","
+				+ "\"clid\":110003000}"
+				+ "&id="+id;
+		return url;
+	}
 }

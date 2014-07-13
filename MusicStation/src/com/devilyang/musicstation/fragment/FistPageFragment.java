@@ -18,7 +18,9 @@ import com.devilyang.musicstation.util.URLProviderUtil;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -33,6 +35,7 @@ public class FistPageFragment extends BaseFragment {
 	private TextView titleTxt;
 	private TextView authorTxt;
 	private ImageView detailImg;
+	private TextView failTips;
 	private RelativeLayout bottomLayout;
 	private ProgressBar progressBar;
 	private ArrayList<FirstPageBean> firstBeans = new ArrayList<FirstPageBean>();;
@@ -75,6 +78,7 @@ public class FistPageFragment extends BaseFragment {
 		LogUtil.d("MusicStation", "FistPageFragment onViewCreated()");
 	}
 	private void findView(View v){
+		failTips = (TextView)v.findViewById(R.id.failed_tips);
 		viewPager = (ViewPager)v.findViewById(R.id.first_pager);
 		cIndicator = (CirclePageIndicator)v.findViewById(R.id.circle_indicator);
 		catImg = (ImageView)v.findViewById(R.id.home_page_img);
@@ -102,6 +106,16 @@ public class FistPageFragment extends BaseFragment {
 			@Override
 			public void onPageScrollStateChanged(int state) {
 				
+			}
+		});
+		failTips.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				startLoad();
+				failTips.setVisibility(View.GONE);
+				progressBar.setVisibility(View.VISIBLE);
+				return true;
 			}
 		});
 		updateBottom(0);
@@ -178,6 +192,8 @@ public class FistPageFragment extends BaseFragment {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				LogUtil.v("FirstPage", "errorSponseListener..."+error.getLocalizedMessage());
+				failTips.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 			}
 		};
 	}

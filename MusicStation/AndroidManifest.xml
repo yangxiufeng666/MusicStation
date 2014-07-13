@@ -18,9 +18,17 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:name="com.devilyang.musicstation.MusicStationApplication" >
+        <!-- Don't forgot InitActivity -->
+        <activity
+            android:name="io.vov.vitamio.activity.InitActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.devilyang.musicstation.MusicStationMainActivity"
             android:theme="@style/Theme.PageIndicatorDefaults"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +36,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.devilyang.musicstation.DetailActivity"
+            android:theme="@style/Theme.PageIndicatorDefaults"
+            android:screenOrientation="portrait"
+            android:launchMode="standard"></activity>
+        <activity android:name="com.devilyang.musicstation.VideoViewPlayerActivity"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"></activity>
     </application>
 
 </manifest>

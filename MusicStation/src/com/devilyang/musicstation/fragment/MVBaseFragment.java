@@ -9,10 +9,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.View.OnTouchListener;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -30,6 +33,7 @@ import com.devilyang.musicstation.util.URLProviderUtil;
 public class MVBaseFragment extends BaseFragment{
 	private View rootView;
 	private TabPageIndicator tabiIndicator;
+	private TextView failTips;
 	private ViewPager viewPager;
 	private ProgressBar progressBar;
 	private MVPagerAdapter mvPagerAdapter;
@@ -71,12 +75,23 @@ public class MVBaseFragment extends BaseFragment{
 		LogUtil.d("MVBaseFragment", "MVBaseFragment onDestroyView()");
 	}
 	private void initData(View view) {
+		failTips = (TextView)view.findViewById(R.id.failed_tips);
 		tabiIndicator = (TabPageIndicator)view.findViewById(R.id.tab_indicator);
 		viewPager = (ViewPager)view.findViewById(R.id.mv_pager);
 		progressBar=(ProgressBar)view.findViewById(R.id.mv_root_progress);
 		mvPagerAdapter = new MVPagerAdapter(getChildFragmentManager(), areaBeans,fragments);
 		viewPager.setAdapter(mvPagerAdapter);
 		tabiIndicator.setViewPager(viewPager);
+		failTips.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				startLoadArea();
+				failTips.setVisibility(View.GONE);
+				progressBar.setVisibility(View.VISIBLE);
+				return true;
+			}
+		});
 		startLoadArea();
 	}
 	private void startLoadArea(){
@@ -138,6 +153,8 @@ public class MVBaseFragment extends BaseFragment{
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				LogUtil.v("MVBaseFragment", "errorSponseListener..."+error.getLocalizedMessage());
+				progressBar.setVisibility(View.GONE);
+				failTips.setVisibility(View.VISIBLE);
 			}
 		};
 	}

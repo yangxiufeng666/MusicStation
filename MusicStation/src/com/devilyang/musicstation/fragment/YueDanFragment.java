@@ -11,6 +11,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.devilyang.musicstation.DetailActivity;
 import com.devilyang.musicstation.R;
 import com.devilyang.musicstation.R.layout;
 import com.devilyang.musicstation.adapter.YueDanMainListAdapter;
@@ -22,13 +23,19 @@ import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.Mode;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshListView;
 import com.devilyang.musicstation.util.URLProviderUtil;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class YueDanFragment extends BaseFragment{
 	private static final String TAG  = "YueDanFragment";
@@ -37,6 +44,7 @@ public class YueDanFragment extends BaseFragment{
 	private PullToRefreshListView mPullToRefreshListView;
 	private ProgressBar mProgressBar;
 	private View rootView;
+	private TextView failTips;
 	private YueDanListBean bean;
 	private ArrayList<YueDanListBean.PlayLists> playLists = new ArrayList<YueDanListBean.PlayLists>();
 	private YueDanMainListAdapter adapter;
@@ -55,6 +63,7 @@ public class YueDanFragment extends BaseFragment{
 		return rootView;
 	}
 	private void findView(){
+		failTips = (TextView)rootView.findViewById(R.id.failed_tips);
 		mPullToRefreshListView = (PullToRefreshListView)rootView.findViewById(R.id.pull_refresh_list);
 		mProgressBar = (ProgressBar)rootView.findViewById(R.id.mv_root_progress);
 		mPullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
@@ -84,6 +93,27 @@ public class YueDanFragment extends BaseFragment{
 		ListView actualList = mPullToRefreshListView.getRefreshableView();
 		adapter = new YueDanMainListAdapter(playLists, getActivity());
 		actualList.setAdapter(adapter);
+		actualList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent();
+				intent.putExtra("id", playLists.get(position-1).getId());
+				intent.setClass(getActivity(), DetailActivity.class);
+				getActivity().startActivity(intent);
+			}
+		});
+		failTips.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				startLoadData(offset,SIZE);
+				failTips.setVisibility(View.GONE);
+				mProgressBar.setVisibility(View.VISIBLE);
+				return true;
+			}
+		});
 	}
 	private void startLoadData(int offset,int size){
 		if(bean!=null){
@@ -129,6 +159,10 @@ public class YueDanFragment extends BaseFragment{
 			public void onErrorResponse(VolleyError error) {
 				LogUtil.d(TAG, "errorSponseListener error = "+error.getLocalizedMessage());
 				mPullToRefreshListView.onRefreshComplete();
+				if(bean==null){
+					mProgressBar.setVisibility(View.GONE);
+					failTips.setVisibility(View.VISIBLE);
+				}
 			}
 		};
 	}

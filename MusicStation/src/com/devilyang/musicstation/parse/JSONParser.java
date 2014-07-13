@@ -89,4 +89,14 @@ public class JSONParser {
 		
 		return sattr;
 	}
+
+	public boolean getBoolean(String key) {
+		boolean result = false;
+		try {
+			result = jsonObject.getBoolean(key);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 }

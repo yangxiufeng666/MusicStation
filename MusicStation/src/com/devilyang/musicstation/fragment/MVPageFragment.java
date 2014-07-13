@@ -11,6 +11,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.devilyang.musicstation.DetailActivity;
 import com.devilyang.musicstation.R;
 import com.devilyang.musicstation.adapter.MVListAdapter;
 import com.devilyang.musicstation.bean.MVListBean;
@@ -22,11 +23,14 @@ import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.Mode;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.OnLastItemVisibleListener;
 import com.devilyang.musicstation.util.URLProviderUtil;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -140,6 +144,18 @@ public class MVPageFragment extends BaseFragment{
 		mPullRefreshListView.setScrollingWhileRefreshingEnabled(false);
 		adapter = new MVListAdapter(videosList, getActivity());
 		actualListView.setAdapter(adapter);
+		actualListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent();
+				intent.putExtra("id", videosList.get(position-1).getId());
+				intent.putExtra("isRelativeVideo", true);
+				intent.setClass(getActivity(), DetailActivity.class);
+				getActivity().startActivity(intent);
+			}
+		});
 	}
 	private void updateUI(){
 		offset +=SIZE; 

@@ -27,12 +27,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MVPageFragment extends BaseFragment{
@@ -41,6 +45,7 @@ public class MVPageFragment extends BaseFragment{
 	private View rootView;
 	private PullToRefreshListView mPullRefreshListView;
 	private ProgressBar progressBar;
+	private TextView failTips;
 	private String areaCode;
 	private ArrayList<Videos> videosList = new ArrayList<MVListBean.Videos>();
 	private MVListBean bean;
@@ -100,6 +105,7 @@ public class MVPageFragment extends BaseFragment{
 				size), null, responseListener(), errorSponseListener()), "MVPageFragment");
 	}
 	private void findView(View v){
+		failTips = (TextView)v.findViewById(R.id.failed_tips);
 		mPullRefreshListView = (PullToRefreshListView)v.findViewById(R.id.pull_refresh_list);
 		progressBar = (ProgressBar)v.findViewById(R.id.mv_root_progress);
 		// Set a listener to be invoked when the list should be refreshed.
@@ -156,6 +162,15 @@ public class MVPageFragment extends BaseFragment{
 				getActivity().startActivity(intent);
 			}
 		});
+		failTips.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startLoadData(offset, SIZE);
+				failTips.setVisibility(View.GONE);
+				progressBar.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 	private void updateUI(){
 		offset +=SIZE; 
@@ -187,6 +202,15 @@ public class MVPageFragment extends BaseFragment{
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				mPullRefreshListView.onRefreshComplete();
+				if(offset==0){
+					failTips.setVisibility(View.VISIBLE);
+					progressBar.setVisibility(View.GONE);
+				}else{
+					if(getActivity()!=null){
+						Toast.makeText(getActivity(), R.string.net_error_tips, Toast.LENGTH_SHORT).show();
+					}
+					
+				}
 //				LogUtil.d("MVPageFragment", "MVPageFragment onErrorResponse = "+error.getLocalizedMessage());
 			}
 		};

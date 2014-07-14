@@ -4,100 +4,122 @@
     android:layout_height="match_parent"
     android:background="@android:color/white" >
 
-    <LinearLayout
-        android:id="@+id/main_content"
+    <include 
+        android:id="@+id/title_layut"
+        layout="@layout/main_title_layout" />
+
+    <RelativeLayout
+        android:layout_below="@id/title_layut"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone" >
-
-        <include layout="@layout/main_title_layout" />
-		
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" >
-
-            <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/detail_poster"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:clickable="true" />
-            <ImageView 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/playbuttonlight"
-                android:layout_centerInParent="true"/>
-        </RelativeLayout>
+        android:layout_height="match_parent" >
 
         <LinearLayout
+            android:id="@+id/main_content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="vertical" >
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" >
+
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/detail_poster"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:scaleType="fitXY" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/playbuttonlight" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal" >
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="vertical" >
 
-                <RelativeLayout
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" >
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal" >
 
-                    <TextView
-                        android:id="@+id/detail_left_btn"
-                        android:layout_width="match_parent"
+                    <RelativeLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:background="@drawable/tab_pressed_bg"
-                        android:clickable="true"
-                        android:scaleType="fitXY"
-                        android:gravity="center"
-                        android:textColor="@android:color/black" />
-                </RelativeLayout>
+                        android:layout_weight="1" >
 
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" >
+                        <TextView
+                            android:id="@+id/detail_left_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="15dp"
+                            android:background="@drawable/tab_pressed_bg"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:scaleType="fitXY"
+                            android:textColor="@android:color/black" />
+                    </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/detail_right_btn"
-                        android:layout_width="match_parent"
+                    <RelativeLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="15dp"
-                        android:background="@drawable/tab_n_bg"
-                        android:clickable="true"
-                        android:scaleType="fitXY"
-                        android:gravity="center"
-                        android:textColor="@android:color/black" />
-                </RelativeLayout>
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:id="@+id/detail_right_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="15dp"
+                            android:background="@drawable/tab_n_bg"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:scaleType="fitXY"
+                            android:textColor="@android:color/black" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="3dp"
+                    android:background="@color/green_light" />
+
+                <FrameLayout
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:background="@android:color/white" >
+                </FrameLayout>
             </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="3dp"
-                android:background="@color/green_light" />
-
-            <FrameLayout
-                android:id="@+id/content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:background="@android:color/white" >
-            </FrameLayout>
         </LinearLayout>
-    </LinearLayout>
-	<ProgressBar 
-	    android:id="@+id/progress"
-	    android:layout_height="wrap_content"
-	    android:layout_width="wrap_content"
-	    style="@android:style/Widget.Holo.ProgressBar.Large"
-	    android:visibility="visible"
-	    android:layout_centerInParent="true"/>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@android:style/Widget.Holo.ProgressBar.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/failed_tips"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/load_error"
+            android:textColor="@android:color/black"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
 </RelativeLayout>

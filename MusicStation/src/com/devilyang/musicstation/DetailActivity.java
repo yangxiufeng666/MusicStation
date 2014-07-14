@@ -44,6 +44,8 @@ public class DetailActivity extends FragmentActivity implements ResponseListener
 	private ProgressBar progressBar;
 	private NetworkImageView detailPoster;
 	private LinearLayout layout;
+	private TextView failTips;
+	private TextView titleName;
 	
 	private PeopleYueDanListBean peopleYueDanListBean;
 	private RelatedVideosListBean relatedVideosListBean;
@@ -53,7 +55,7 @@ public class DetailActivity extends FragmentActivity implements ResponseListener
 	
 	private PlayInfoBean playInfoBean;
 	
-	
+	private boolean isDestory;
 	@Override
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub
@@ -64,26 +66,24 @@ public class DetailActivity extends FragmentActivity implements ResponseListener
 		id = intent.getIntExtra("id", 0);
 		findView();
 	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		isDestory = true;
+		RequestManager.cancelAll("getRelateVideo");
+		RequestManager.cancelAll("getPeopleYueDanList");
+	}
 	private void findView(){
+		titleName = (TextView)findViewById(R.id.title_name);
+		titleName.setText(R.string.detail_title);
+		failTips = (TextView)findViewById(R.id.failed_tips);
 		layout = (LinearLayout)findViewById(R.id.main_content);
 		progressBar = (ProgressBar)findViewById(R.id.progress);
 		detailPoster = (NetworkImageView)findViewById(R.id.detail_poster);
 		detailPoster.setDefaultImageResId(R.drawable.default_splash_bg);
 		leftBtnImg = (TextView)findViewById(R.id.detail_left_btn);
 		rightBtnImg = (TextView)findViewById(R.id.detail_right_btn);
-		if (isRelativeVideo) {
-			executeRequest(
-					new JsonObjectRequest(Method.GET,
-							URLProviderUtil.getRelativeVideoListUrl(id), null,
-							responseListener(), errorSponseListener()),
-					"getRelateVideo");
-		} else {
-			executeRequest(
-					new JsonObjectRequest(Method.GET,
-							URLProviderUtil.getPeopleYueDanList(id), null,
-							responseListener(), errorSponseListener()),
-					"getPeopleYueDanList");
-		}
+		startLoadData();
 		leftBtnImg.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -132,8 +132,35 @@ public class DetailActivity extends FragmentActivity implements ResponseListener
 				startActivity(intent);
 			}
 		});
+		failTips.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				failTips.setVisibility(View.GONE);
+				progressBar.setVisibility(View.VISIBLE);
+				startLoadData();
+			}
+		});
+	}
+	private void startLoadData() {
+		if (isRelativeVideo) {
+			executeRequest(
+					new JsonObjectRequest(Method.GET,
+							URLProviderUtil.getRelativeVideoListUrl(id), null,
+							responseListener(), errorSponseListener()),
+					"getRelativeVideoList");
+		} else {
+			executeRequest(
+					new JsonObjectRequest(Method.GET,
+							URLProviderUtil.getPeopleYueDanList(id), null,
+							responseListener(), errorSponseListener()),
+					"getPeopleYueDanList");
+		}
 	}
 	private void updateUI(Object object){
+		if(isDestory){
+			return;
+		}
 		getSupportFragmentManager()
 		.beginTransaction()
 		.add(R.id.content, DetailContentFragment.getInstance(object, isRelativeVideo),
@@ -199,6 +226,8 @@ public class DetailActivity extends FragmentActivity implements ResponseListener
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				LogUtil.e(TAG, "errorSponseListener error = "+error.getLocalizedMessage());
+				failTips.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 			}
 		};
 	}

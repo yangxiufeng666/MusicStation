@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@android:color/white" >
 
     <com.devilyang.musicstation.indicator.TabPageIndicator 
         android:id="@+id/vhart_indicator"
@@ -27,7 +28,7 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:gravity="center"
-        android:text="加载失败，点击屏幕重新加载!"
+        android:text="@string/load_error"
         android:visibility="gone"
         android:clickable="true"
         android:textColor="@android:color/black"/>

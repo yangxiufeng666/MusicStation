@@ -45,7 +45,7 @@
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:gravity="center"
-                android:text="" />
+                android:text="@string/hd_video" />
         </RelativeLayout>
         
     </RelativeLayout>

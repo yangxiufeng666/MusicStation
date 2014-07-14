@@ -66,6 +66,7 @@ public class YueDanFragment extends BaseFragment{
 		failTips = (TextView)rootView.findViewById(R.id.failed_tips);
 		mPullToRefreshListView = (PullToRefreshListView)rootView.findViewById(R.id.pull_refresh_list);
 		mProgressBar = (ProgressBar)rootView.findViewById(R.id.mv_root_progress);
+		
 		mPullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
 
 			@Override
@@ -88,7 +89,7 @@ public class YueDanFragment extends BaseFragment{
 				startLoadData(offset,SIZE);
 			}
 		});
-		mPullToRefreshListView.setMode(Mode.PULL_FROM_END);
+		mPullToRefreshListView.setMode(Mode.DISABLED);
 		mPullToRefreshListView.setScrollingWhileRefreshingEnabled(false);
 		ListView actualList = mPullToRefreshListView.getRefreshableView();
 		adapter = new YueDanMainListAdapter(playLists, getActivity());
@@ -145,6 +146,7 @@ public class YueDanFragment extends BaseFragment{
 					e.printStackTrace();
 				}
 				mProgressBar.setVisibility(View.GONE);
+				mPullToRefreshListView.setMode(Mode.PULL_FROM_END);
 				mPullToRefreshListView.onRefreshComplete();
 				updateUI();
 			}

@@ -157,7 +157,7 @@ public class VideoViewPlayerActivity extends Activity implements
 		long temCurTimes = System.currentTimeMillis();
 		if (temCurTimes - currentTimes > 2000) {
 			currentTimes = temCurTimes;
-			Toast.makeText(this, "在按一次推出播放", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.exit_play, Toast.LENGTH_SHORT).show();
 			return;
 		}
 		super.onBackPressed();
@@ -297,7 +297,7 @@ public class VideoViewPlayerActivity extends Activity implements
 			topLayout.setVisibility(View.VISIBLE);
 			playProgressView.setVisibility(View.VISIBLE);
 			displayModebtn.setVisibility(View.VISIBLE);
-			modeBtn.setText(playMode);
+//			modeBtn.setText(playMode);
 			mShowing = true;
 			Message msg = Message.obtain();
 			msg.what = SHOW_PROGRESS;

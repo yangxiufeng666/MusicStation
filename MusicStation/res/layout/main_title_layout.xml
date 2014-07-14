@@ -12,7 +12,7 @@
         android:layout_centerInParent="true"
         android:textColor="@android:color/white"
         android:textSize="15sp"
-        android:text="首页"/>
+        android:text="@string/first_page"/>
 	<ImageView 
 	    android:id="@+id/title_search_img"
 	    android:layout_height="wrap_content"

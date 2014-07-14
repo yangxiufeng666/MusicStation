@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
@@ -71,5 +72,17 @@ public class MusicStationMainActivity extends FragmentActivity {
 		ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
 		imageView.setImageResource(imageindex[index]);
 		return view;
+	}
+	long currentTimes;
+	@Override
+	public void onBackPressed() {
+		long temCurTimes = System.currentTimeMillis();
+		if (temCurTimes - currentTimes > 2000) {
+			currentTimes = temCurTimes;
+			Toast.makeText(this, R.string.exit_app, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		super.onBackPressed();
+
 	}
 }

@@ -9,7 +9,9 @@ import com.devilyang.musicstation.util.URLProviderUtil;
 import com.devilyang.musicstation.util.Util;
 import com.devilyang.musicstation.widget.FragmentTabHost;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 public class MusicStationMainActivity extends FragmentActivity {
+	private ImageView spashImg;
 	private FragmentTabHost tabHost;
 	private TextView titleTxt;
 	private ImageView searchImg;
@@ -30,7 +33,14 @@ public class MusicStationMainActivity extends FragmentActivity {
 			R.drawable.mv_page_selector, R.drawable.vchart_page_selector,
 			R.drawable.yuedan_page_selector };
 	private String[] tabTag;
-
+	private Runnable splashRunnable = new Runnable() {
+		
+		@Override
+		public void run() {
+			spashImg.setVisibility(View.GONE);
+		}
+	};
+	private Handler handler = new Handler();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,6 +48,7 @@ public class MusicStationMainActivity extends FragmentActivity {
 		initData();
 	}
 	private void initData(){
+		spashImg = (ImageView)findViewById(R.id.spash_img);
 		tabTag = getResources().getStringArray(R.array.tab_indicator_name);
 		tabHost = (FragmentTabHost)findViewById(R.id.tabhost);
 		titleTxt = (TextView)findViewById(R.id.title_name);
@@ -62,6 +73,7 @@ public class MusicStationMainActivity extends FragmentActivity {
 				titleTxt.setText(tabId);
 			}
 		});
+		handler.postDelayed(splashRunnable, 3000);
 	}
 	/**
 	 * 获取导航图标

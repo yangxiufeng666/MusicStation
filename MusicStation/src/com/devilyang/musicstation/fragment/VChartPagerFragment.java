@@ -36,6 +36,7 @@ import com.devilyang.musicstation.bean.VChartListBean;
 import com.devilyang.musicstation.bean.VChartPeriodBean;
 import com.devilyang.musicstation.bean.VChartPeriodBean.Periods;
 import com.devilyang.musicstation.net.LogUtil;
+import com.devilyang.musicstation.net.RequestManager;
 import com.devilyang.musicstation.util.URLProviderUtil;
 
 public class VChartPagerFragment extends BaseFragment {
@@ -137,6 +138,18 @@ public class VChartPagerFragment extends BaseFragment {
 				getActivity().startActivity(intent);
 			}
 		});
+	}
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		RequestManager.cancelAll("getVChartPeriod");
+		RequestManager.cancelAll("getVChartList");
+		
 	}
 	private void updateUI(){
 		LogUtil.d(TAG, " updateUI = "+vChartListBean.getVideosList().size());

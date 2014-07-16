@@ -29,7 +29,7 @@ public class FistPagerItemFragment extends Fragment{
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fist_page_item, null);
 		imageView = (NetworkImageView)v.findViewById(R.id.fist_page_img);
-		imageView.setDefaultImageResId(R.drawable.default_splash_bg);
+		imageView.setDefaultImageResId(R.drawable.default_big_poster);
 		imageView.setImageUrl(bean.getPosterPic(), RequestManager.getImageLoader());
 		imageView.setOnClickListener(new View.OnClickListener() {
 			

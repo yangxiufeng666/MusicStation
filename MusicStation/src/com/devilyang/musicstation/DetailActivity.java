@@ -80,7 +80,7 @@ public class DetailActivity extends FragmentActivity implements ResponseListener
 		layout = (LinearLayout)findViewById(R.id.main_content);
 		progressBar = (ProgressBar)findViewById(R.id.progress);
 		detailPoster = (NetworkImageView)findViewById(R.id.detail_poster);
-		detailPoster.setDefaultImageResId(R.drawable.default_splash_bg);
+		detailPoster.setDefaultImageResId(R.drawable.default_small_poster);
 		leftBtnImg = (TextView)findViewById(R.id.detail_left_btn);
 		rightBtnImg = (TextView)findViewById(R.id.detail_right_btn);
 		startLoadData();

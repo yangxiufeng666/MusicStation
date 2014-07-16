@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-	<include layout="@layout/main_title_layout"/>
-    <FrameLayout
-        android:id="@+id/realtabcontent"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <com.devilyang.musicstation.widget.FragmentTabHost
-        android:id="@+id/tabhost"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bottom_navi_bg" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <include layout="@layout/main_title_layout" />
 
         <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="0" />
-    </com.devilyang.musicstation.widget.FragmentTabHost>
+            android:id="@+id/realtabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1" />
 
-</LinearLayout>
+        <com.devilyang.musicstation.widget.FragmentTabHost
+            android:id="@+id/tabhost"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bottom_navi_bg" >
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="0" />
+        </com.devilyang.musicstation.widget.FragmentTabHost>
+    </LinearLayout>
+	<ImageView 
+	    android:id="@+id/spash_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/default_big_poster"/>
+</RelativeLayout>

@@ -16,15 +16,18 @@ import com.devilyang.musicstation.R;
 import com.devilyang.musicstation.adapter.MVListAdapter;
 import com.devilyang.musicstation.bean.MVListBean;
 import com.devilyang.musicstation.bean.MVListBean.Videos;
+import com.devilyang.musicstation.cache.CacheManager;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshBase;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshListView;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.Mode;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.OnLastItemVisibleListener;
 import com.devilyang.musicstation.util.URLProviderUtil;
+import com.devilyang.musicstation.util.Util;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -51,6 +54,17 @@ public class MVPageFragment extends BaseFragment{
 	private MVListBean bean;
 	private MVListAdapter adapter;
 	private int offset=0;
+	/**当有缓存的时候，延时去加载500毫秒去加载数据，避免下拉刷新提示一直存在，暂未找到好办法*/
+	private Handler handler;
+	private JSONObject jsonObject;
+	private Runnable runnable =  new Runnable() {
+		
+		@Override
+		public void run() {
+			parseResponse(jsonObject);
+		}
+	};
+	/**当有缓存的时候，延时去加载500毫秒去加载数据，避免下拉刷新提示一直存在，暂未找到好办法*/
 	public static MVPageFragment newInstance(String areaCode) {
 		MVPageFragment fragment = new MVPageFragment();
 		fragment.areaCode = areaCode;
@@ -64,6 +78,7 @@ public class MVPageFragment extends BaseFragment{
 			LogUtil.d("MVPageFragment", "MVPageFragment rootView == null ");
 			rootView=inflater.inflate(R.layout.pull_to_refresh_listview, null, false);
 			findView(rootView);
+			handler = new Handler();
 			startLoadData(offset,SIZE);
 		}
 		LogUtil.d("MVPageFragment", "MVPageFragment areaCode = "+areaCode+" offset = "+offset);
@@ -101,8 +116,18 @@ public class MVPageFragment extends BaseFragment{
 			}
 		}
 		mPullRefreshListView.setMode(Mode.PULL_FROM_END);
-		executeRequest(new JsonObjectRequest(Method.GET, URLProviderUtil.getMVListUrl(areaCode, offset,
-				size), null, responseListener(), errorSponseListener()), "MVPageFragment");
+		String url =  URLProviderUtil.getMVListUrl(areaCode, offset,
+				size);
+		jsonObject = CacheManager.getInstance().getACache().getAsJSONObject(url);
+		if (jsonObject == null) {
+			executeRequest(new JsonObjectRequest(Method.GET, url, null,
+					responseListener(), errorSponseListener()),
+					"MVPageFragment");
+		}else{
+			LogUtil.e("error", "有缓存数据啦。。。更新。。。");
+			handler.postDelayed(runnable, 500);
+		}
+		
 	}
 	private void findView(View v){
 		failTips = (TextView)v.findViewById(R.id.failed_tips);
@@ -173,6 +198,7 @@ public class MVPageFragment extends BaseFragment{
 		});
 	}
 	private void updateUI(){
+		mPullRefreshListView.onRefreshComplete();
 		offset +=SIZE; 
 		adapter.notifyDataSetChanged();
 	}
@@ -183,16 +209,11 @@ public class MVPageFragment extends BaseFragment{
 			@Override
 			public void onResponse(JSONObject response) {
 //				LogUtil.d("MVPageFragment", "MVPageFragment response = "+response.toString());
-				progressBar.setVisibility(View.GONE);
-				mPullRefreshListView.onRefreshComplete();
-				try {
-					bean = new MVListBean(response);
-					videosList.addAll(bean.getVideosList());
-					updateUI();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				CacheManager.getInstance().getACache().put(URLProviderUtil.getMVListUrl(areaCode, offset,
+				SIZE), response,Util.SAVE_TIME);
+				parseResponse(response);
 			}
+
 		};
 	}
 	@Override
@@ -214,5 +235,17 @@ public class MVPageFragment extends BaseFragment{
 //				LogUtil.d("MVPageFragment", "MVPageFragment onErrorResponse = "+error.getLocalizedMessage());
 			}
 		};
+	}
+	private void parseResponse(JSONObject response) {
+		progressBar.setVisibility(View.GONE);
+		LogUtil.e("error", "onRefreshComplete。。。");
+		mPullRefreshListView.onRefreshComplete();
+		try {
+			bean = new MVListBean(response);
+			videosList.addAll(bean.getVideosList());
+			updateUI();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 }

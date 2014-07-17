@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -11,9 +12,11 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.devilyang.musicstation.R;
 import com.devilyang.musicstation.adapter.FirstPagerAdapter;
 import com.devilyang.musicstation.bean.FirstPageBean;
+import com.devilyang.musicstation.cache.CacheManager;
 import com.devilyang.musicstation.indicator.CirclePageIndicator;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.util.URLProviderUtil;
+import com.devilyang.musicstation.util.Util;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -144,8 +147,14 @@ public class FistPageFragment extends BaseFragment {
 		authorTxt.setText(firstBeans.get(index).getDescription());
 	}
 	private void startLoad() {
-		executeRequest(new JsonArrayRequest(URLProviderUtil.getMainPageUrl(),
-				responseListener(), errorSponseListener()), "tag");
+		JSONArray jsonArray = CacheManager.getInstance().getACache().getAsJSONArray(URLProviderUtil.getMainPageUrl());
+		if(jsonArray==null){
+			executeRequest(new JsonArrayRequest(URLProviderUtil.getMainPageUrl(),
+					responseListener(), errorSponseListener()), "tag");
+		}else{
+			parseResponse(jsonArray);
+		}
+		
 	}
 	@Override
 	public Response.Listener<JSONArray> responseListener() {
@@ -154,34 +163,8 @@ public class FistPageFragment extends BaseFragment {
 			@Override
 			public void onResponse(JSONArray response) {
 				LogUtil.v("FirstPage", "responseListener..."+response.toString());
-				boolean isDataChange = true;
-				ArrayList<FirstPageBean> tempBeans = new ArrayList<FirstPageBean>();
-				for (int i = 0; i < response.length(); i++) {
-					try {
-						FirstPageBean bean = new FirstPageBean(response.getJSONObject(i));
-						if(firstBeans.size()!=response.length()){
-							firstBeans.clear();
-						}
-						if(firstBeans.size()!=0){
-							if (firstBeans.get(i).equals(bean)) {
-								isDataChange = false;
-							}else{
-								isDataChange = true;
-							}
-						}
-						tempBeans.add(bean);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-				viewPager.setVisibility(View.VISIBLE);
-				progressBar.setVisibility(View.GONE);
-				bottomLayout.setVisibility(View.VISIBLE);
-				if(isDataChange){
-					firstBeans.clear();
-					firstBeans.addAll(tempBeans);
-					updateUi();
-				}
+				CacheManager.getInstance().getACache().put(URLProviderUtil.getMainPageUrl(), response,Util.SAVE_TIME);
+				parseResponse(response);
 			}
 		};
 	}
@@ -196,5 +179,35 @@ public class FistPageFragment extends BaseFragment {
 				progressBar.setVisibility(View.GONE);
 			}
 		};
+	}
+	private void parseResponse(JSONArray response) {
+		boolean isDataChange = true;
+		ArrayList<FirstPageBean> tempBeans = new ArrayList<FirstPageBean>();
+		for (int i = 0; i < response.length(); i++) {
+			try {
+				FirstPageBean bean = new FirstPageBean(response.getJSONObject(i));
+				if(firstBeans.size()!=response.length()){
+					firstBeans.clear();
+				}
+				if(firstBeans.size()!=0){
+					if (firstBeans.get(i).equals(bean)) {
+						isDataChange = false;
+					}else{
+						isDataChange = true;
+					}
+				}
+				tempBeans.add(bean);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		viewPager.setVisibility(View.VISIBLE);
+		progressBar.setVisibility(View.GONE);
+		bottomLayout.setVisibility(View.VISIBLE);
+		if(isDataChange){
+			firstBeans.clear();
+			firstBeans.addAll(tempBeans);
+			updateUi();
+		}
 	}
 }

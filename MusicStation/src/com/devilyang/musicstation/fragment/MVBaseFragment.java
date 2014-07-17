@@ -26,9 +26,11 @@ import com.devilyang.musicstation.R;
 import com.devilyang.musicstation.adapter.MVPagerAdapter;
 import com.devilyang.musicstation.bean.FirstPageBean;
 import com.devilyang.musicstation.bean.AreaBean;
+import com.devilyang.musicstation.cache.CacheManager;
 import com.devilyang.musicstation.indicator.TabPageIndicator;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.util.URLProviderUtil;
+import com.devilyang.musicstation.util.Util;
 
 public class MVBaseFragment extends BaseFragment{
 	private View rootView;
@@ -95,7 +97,16 @@ public class MVBaseFragment extends BaseFragment{
 		startLoadArea();
 	}
 	private void startLoadArea(){
-		executeRequest(new JsonArrayRequest(URLProviderUtil.getMVareaUrl(), responseListener(), errorSponseListener()), MVBaseFragment.class);
+		String url = URLProviderUtil.getMVareaUrl();
+		JSONArray jsonArray = CacheManager.getInstance().getACache().getAsJSONArray(url);
+		if(jsonArray==null){
+			executeRequest(new JsonArrayRequest(url,
+					responseListener(), errorSponseListener()),
+					MVBaseFragment.class);
+		} else {
+			parseResponse(jsonArray);
+		}
+		
 	}
 	private void updateUi(){
 		LogUtil.d("MVBaseFragment", "MVBaseFragment updateUi()");
@@ -104,7 +115,6 @@ public class MVBaseFragment extends BaseFragment{
 		progressBar.setVisibility(View.GONE);
 		mvPagerAdapter.notifyDataSetChanged();
 		tabiIndicator.notifyDataSetChanged();
-//		viewPager.setOffscreenPageLimit(areaBeans.size());
 	}
 	@Override
 	public Listener<JSONArray> responseListener() {
@@ -113,36 +123,8 @@ public class MVBaseFragment extends BaseFragment{
 			@Override
 			public void onResponse(JSONArray response) {
 				LogUtil.d("MVBaseFragment", "response = "+response.toString());
-				boolean isDataChange = true;
-				ArrayList<AreaBean> tempBeans = new ArrayList<AreaBean>();
-				for (int i = 0; i < response.length(); i++) {
-					try {
-						AreaBean areaBean = new AreaBean(response.getJSONObject(i));
-						if(areaBeans.size()!=response.length()){
-							areaBeans.clear();
-						}
-						if(areaBeans.size()!=0){
-							if (areaBeans.get(i).equals(areaBean)) {
-								isDataChange = false;
-							}else{
-								isDataChange = true;
-							}
-						}
-						tempBeans.add(areaBean);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-				progressBar.setVisibility(View.GONE);
-				if(isDataChange){
-					areaBeans.addAll(tempBeans);
-					for (int i = 0; i < areaBeans.size(); i++) {
-						MVPageFragment fragment = MVPageFragment.newInstance(areaBeans.get(i).getCode());
-						fragments.add(fragment);
-					}
-					updateUi();
-				}
-				
+				CacheManager.getInstance().getACache().put(URLProviderUtil.getMVareaUrl(), response,Util.SAVE_TIME);
+				parseResponse(response);
 			}
 		};
 	}
@@ -158,5 +140,35 @@ public class MVBaseFragment extends BaseFragment{
 			}
 		};
 	}
-
+	private void parseResponse(JSONArray response) {
+		boolean isDataChange = true;
+		ArrayList<AreaBean> tempBeans = new ArrayList<AreaBean>();
+		for (int i = 0; i < response.length(); i++) {
+			try {
+				AreaBean areaBean = new AreaBean(response.getJSONObject(i));
+				if(areaBeans.size()!=response.length()){
+					areaBeans.clear();
+				}
+				if(areaBeans.size()!=0){
+					if (areaBeans.get(i).equals(areaBean)) {
+						isDataChange = false;
+					}else{
+						isDataChange = true;
+					}
+				}
+				tempBeans.add(areaBean);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		progressBar.setVisibility(View.GONE);
+		if(isDataChange){
+			areaBeans.addAll(tempBeans);
+			for (int i = 0; i < areaBeans.size(); i++) {
+				MVPageFragment fragment = MVPageFragment.newInstance(areaBeans.get(i).getCode());
+				fragments.add(fragment);
+			}
+			updateUi();
+		}
+	}
 }

@@ -35,9 +35,11 @@ import com.devilyang.musicstation.adapter.VChartListAdapter;
 import com.devilyang.musicstation.bean.VChartListBean;
 import com.devilyang.musicstation.bean.VChartPeriodBean;
 import com.devilyang.musicstation.bean.VChartPeriodBean.Periods;
+import com.devilyang.musicstation.cache.CacheManager;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.net.RequestManager;
 import com.devilyang.musicstation.util.URLProviderUtil;
+import com.devilyang.musicstation.util.Util;
 
 public class VChartPagerFragment extends BaseFragment {
 	
@@ -201,37 +203,55 @@ public class VChartPagerFragment extends BaseFragment {
 	 * 下载时间
 	 */
 	private void startLoadData() {
-		executeRequest(
-				new JsonObjectRequest(Method.GET,
-						URLProviderUtil.getVChartPeriodUrl(areaCode), null,
-						responseListener(), errorSponseListener()), "getVChartPeriod");
+		JSONObject jsonObject = CacheManager.getInstance()
+				.getACache()
+				.getAsJSONObject(URLProviderUtil.getVChartPeriodUrl(areaCode));
+		if(jsonObject==null){
+			executeRequest(
+					new JsonObjectRequest(Method.GET,
+				URLProviderUtil.getVChartPeriodUrl(areaCode), null,
+							responseListener(), errorSponseListener()), "getVChartPeriod");
+		}else{
+			parsePeriodResponse(jsonObject);
+		}
+		
 	}
 	/**
 	 * 根据周期下载列表
 	 * @param dateCode
 	 */
-	private void startLoadListData(int dateCode){
-		executeRequest(new JsonObjectRequest(Method.GET, URLProviderUtil.getVChartListUrl(areaCode, dateCode), null, new Listener<JSONObject>() {
+	private void startLoadListData(final int dateCode){
+		JSONObject jsonObject = CacheManager.getInstance().getACache().getAsJSONObject(URLProviderUtil.getVChartListUrl(areaCode, dateCode));
+		if(jsonObject==null){
+			executeRequest(new JsonObjectRequest(Method.GET, URLProviderUtil.getVChartListUrl(areaCode, dateCode), null, new Listener<JSONObject>() {
 
-			@Override
-			public void onResponse(JSONObject response) {
-				LogUtil.d(TAG, "getVChartList success response = "+response.toString());
-				videos.clear();
-				try {
-					vChartListBean = new VChartListBean(response);
-					videos.addAll(vChartListBean.getVideosList());
-				} catch (JSONException e) {
-					e.printStackTrace();
+				@Override
+				public void onResponse(JSONObject response) {
+					LogUtil.d(TAG, "getVChartList success response = "+response.toString());
+					CacheManager.getInstance().getACache().put(URLProviderUtil.getVChartListUrl(areaCode, dateCode), response, Util.SAVE_TIME);
+					parseListResponse(response);
 				}
-				updateUI();
-			}
-		}, new ErrorListener() {
+			}, new ErrorListener() {
 
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				LogUtil.e(TAG, "getVChartList failed response = "+error.getLocalizedMessage());
-			}
-		}), "getVChartList");
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					LogUtil.e(TAG, "getVChartList failed response = "+error.getLocalizedMessage());
+				}
+			}), "getVChartList");
+		}else{
+			parseListResponse(jsonObject);
+		}
+		
+	}
+	private void parseListResponse(JSONObject response) {
+		videos.clear();
+		try {
+			vChartListBean = new VChartListBean(response);
+			videos.addAll(vChartListBean.getVideosList());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		updateUI();
 	}
 	private void updatePeriod(Periods periods) {
 		String str = getString(R.string.vchart_period);
@@ -245,21 +265,16 @@ public class VChartPagerFragment extends BaseFragment {
 
 			@Override
 			public void onResponse(JSONObject response) {
-				try {
-					LogUtil.d(TAG, "load period success response = "+response.toString());
-					periodBean = new VChartPeriodBean(response);
-					startLoadListData(periodBean.getPeriodsList().get(0).getDateCode());
-					updatePeriod(periodBean.getPeriodsList().get(0));
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				periodsList.clear();
-				periodsList.addAll(periodBean.getPeriodsList());
+				CacheManager
+						.getInstance()
+						.getACache()
+						.put(URLProviderUtil.getVChartPeriodUrl(areaCode),
+								response, Util.SAVE_TIME);
+				parsePeriodResponse(response);
 			}
 
 		};
 	}
-
 	@Override
 	public ErrorListener errorSponseListener() {
 		return new ErrorListener() {
@@ -269,5 +284,16 @@ public class VChartPagerFragment extends BaseFragment {
 			}
 		};
 	}
-
+	private void parsePeriodResponse(JSONObject response) {
+		try {
+			LogUtil.d(TAG, "load period success response = "+response.toString());
+			periodBean = new VChartPeriodBean(response);
+			startLoadListData(periodBean.getPeriodsList().get(0).getDateCode());
+			updatePeriod(periodBean.getPeriodsList().get(0));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		periodsList.clear();
+		periodsList.addAll(periodBean.getPeriodsList());
+	}
 }

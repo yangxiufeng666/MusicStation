@@ -8,6 +8,9 @@ import android.content.Context;
 import android.os.Handler;
 
 public class Util {
+	
+	public static final int SAVE_TIME = 60*60;
+	
 	public static String getSystemversion(){
 		return android.os.Build.VERSION.RELEASE;
 	}

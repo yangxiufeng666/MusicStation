@@ -12,10 +12,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.devilyang.musicstation.R;
 import com.devilyang.musicstation.adapter.VChartPagerAdapter;
 import com.devilyang.musicstation.bean.AreaBean;
+import com.devilyang.musicstation.cache.CacheManager;
 import com.devilyang.musicstation.indicator.TabPageIndicator;
 import com.devilyang.musicstation.interfaces.GetVChartInterface;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.util.URLProviderUtil;
+import com.devilyang.musicstation.util.Util;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -72,7 +74,16 @@ public class VChartFragment extends BaseFragment implements GetVChartInterface{
 		});
 	}
 	private void startLoadData(){
-		executeRequest(new JsonArrayRequest(URLProviderUtil.getVChartAreasUrl(), responseListener(), errorSponseListener()), "getVChartArea");
+		JSONArray jsonArray = CacheManager.getInstance()
+				.getACache()
+				.getAsJSONArray(URLProviderUtil.getVChartAreasUrl());
+		if(jsonArray==null){
+			executeRequest(new JsonArrayRequest(
+					URLProviderUtil.getVChartAreasUrl(), responseListener(),
+					errorSponseListener()), "getVChartArea");
+		}else{
+			parseResponse(jsonArray);
+		}
 	}
 	private void updateUi(){
 		adapter.notifyDataSetChanged();
@@ -85,37 +96,11 @@ public class VChartFragment extends BaseFragment implements GetVChartInterface{
 			@Override
 			public void onResponse(JSONArray response) {
 				LogUtil.d(TAG, "GET AREA SUCCESS RESPONSE = "+response.toString());
-				boolean isDataChange = true;
-				ArrayList<AreaBean> tempBeans = new ArrayList<AreaBean>();
-				for (int i = 0; i < response.length(); i++) {
-					try {
-						AreaBean areaBean = new AreaBean(response.getJSONObject(i));
-						if(areaBeans.size()!=response.length()){
-							areaBeans.clear();
-						}
-						if(areaBeans.size()!=0){
-							if (areaBeans.get(i).equals(areaBean)) {
-								isDataChange = false;
-							}else{
-								isDataChange = true;
-							}
-						}
-						tempBeans.add(areaBean);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-				progressBar.setVisibility(View.GONE);
-				if(isDataChange){
-					areaBeans.clear();
-					areaBeans.addAll(tempBeans);
-					for (int i = 0; i < areaBeans.size(); i++) {
-						VChartPagerFragment fragment = VChartPagerFragment.getInstance(areaBeans.get(i).getCode());
-						fragments.add(fragment);
-					}
-					updateUi();
-				}
+				CacheManager.getInstance().getACache()
+						.put(URLProviderUtil.getVChartAreasUrl(), response,Util.SAVE_TIME);
+				parseResponse(response);
 			}
+
 		};
 	}
 
@@ -131,7 +116,38 @@ public class VChartFragment extends BaseFragment implements GetVChartInterface{
 			}
 		};
 	}
-
+	private void parseResponse(JSONArray response) {
+		boolean isDataChange = true;
+		ArrayList<AreaBean> tempBeans = new ArrayList<AreaBean>();
+		for (int i = 0; i < response.length(); i++) {
+			try {
+				AreaBean areaBean = new AreaBean(response.getJSONObject(i));
+				if(areaBeans.size()!=response.length()){
+					areaBeans.clear();
+				}
+				if(areaBeans.size()!=0){
+					if (areaBeans.get(i).equals(areaBean)) {
+						isDataChange = false;
+					}else{
+						isDataChange = true;
+					}
+				}
+				tempBeans.add(areaBean);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		progressBar.setVisibility(View.GONE);
+		if(isDataChange){
+			areaBeans.clear();
+			areaBeans.addAll(tempBeans);
+			for (int i = 0; i < areaBeans.size(); i++) {
+				VChartPagerFragment fragment = VChartPagerFragment.getInstance(areaBeans.get(i).getCode());
+				fragments.add(fragment);
+			}
+			updateUi();
+		}
+	}
 	@Override
 	public void getVChartResponseOK(String type) {
 		

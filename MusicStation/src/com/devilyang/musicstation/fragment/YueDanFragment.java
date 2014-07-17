@@ -17,14 +17,17 @@ import com.devilyang.musicstation.R.layout;
 import com.devilyang.musicstation.adapter.YueDanMainListAdapter;
 import com.devilyang.musicstation.bean.YueDanListBean;
 import com.devilyang.musicstation.bean.YueDanListBean.PlayLists;
+import com.devilyang.musicstation.cache.CacheManager;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshBase;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.Mode;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshListView;
 import com.devilyang.musicstation.util.URLProviderUtil;
+import com.devilyang.musicstation.util.Util;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,6 +39,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class YueDanFragment extends BaseFragment{
 	private static final String TAG  = "YueDanFragment";
@@ -48,12 +52,24 @@ public class YueDanFragment extends BaseFragment{
 	private YueDanListBean bean;
 	private ArrayList<YueDanListBean.PlayLists> playLists = new ArrayList<YueDanListBean.PlayLists>();
 	private YueDanMainListAdapter adapter;
+	/**当有缓存的时候，延时去加载500毫秒去加载数据，避免下拉刷新提示一直存在，暂未找到好办法*/
+	private Handler handler;
+	private JSONObject jsonObject;
+	private Runnable runnable =  new Runnable() {
+		
+		@Override
+		public void run() {
+			parseResponse(jsonObject);
+		}
+	};
+	/**当有缓存的时候，延时去加载500毫秒去加载数据，避免下拉刷新提示一直存在，暂未找到好办法*/
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		if(rootView==null){
 			rootView = inflater.inflate(R.layout.pull_to_refresh_listview, container, false);
 			findView();
+			handler = new Handler();
 			startLoadData(offset,SIZE);
 		}
 		ViewGroup parent = (ViewGroup) rootView.getParent();
@@ -122,10 +138,20 @@ public class YueDanFragment extends BaseFragment{
 				return;
 			}
 		}
-		executeRequest(
-				new JsonObjectRequest(URLProviderUtil.getMainPageYueDanUrl(offset,
-						size), null, responseListener(), errorSponseListener()),
-				"YuedanFragment");
+		jsonObject = CacheManager
+				.getInstance()
+				.getACache()
+				.getAsJSONObject(
+						URLProviderUtil.getMainPageYueDanUrl(offset, size));
+		if(jsonObject==null){
+			executeRequest(
+					new JsonObjectRequest(URLProviderUtil.getMainPageYueDanUrl(offset,
+							size), null, responseListener(), errorSponseListener()),
+					"YuedanFragment");
+		}else{
+			handler.postDelayed(runnable, 500);
+		}
+		
 	}
 	private void updateUI(){
 		mPullToRefreshListView.setMode(Mode.PULL_FROM_END);
@@ -138,19 +164,13 @@ public class YueDanFragment extends BaseFragment{
 
 			@Override
 			public void onResponse(JSONObject response) {
-				try {
-					LogUtil.d(TAG, "responseListener response = "+response);
-					bean = new YueDanListBean(response);
-					playLists.addAll(bean.getPlayListsList());
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				mProgressBar.setVisibility(View.GONE);
-				mPullToRefreshListView.setMode(Mode.PULL_FROM_END);
-				mPullToRefreshListView.onRefreshComplete();
-				updateUI();
+				CacheManager
+				.getInstance()
+				.getACache().put(URLProviderUtil.getMainPageYueDanUrl(offset,
+							SIZE), response,Util.SAVE_TIME);
+				parseResponse(response);
 			}
-			
+
 		};
 	}
 	@Override
@@ -165,7 +185,23 @@ public class YueDanFragment extends BaseFragment{
 					mProgressBar.setVisibility(View.GONE);
 					failTips.setVisibility(View.VISIBLE);
 				}
+				if(getActivity()!=null){
+					Toast.makeText(getActivity(), R.string.net_error_tips, Toast.LENGTH_SHORT).show();
+				}
 			}
 		};
+	}
+	private void parseResponse(JSONObject response) {
+		try {
+			LogUtil.d(TAG, "responseListener response = "+response);
+			bean = new YueDanListBean(response);
+			playLists.addAll(bean.getPlayListsList());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		mProgressBar.setVisibility(View.GONE);
+		mPullToRefreshListView.setMode(Mode.PULL_FROM_END);
+		mPullToRefreshListView.onRefreshComplete();
+		updateUI();
 	}
 }

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class FistPagerItemFragment extends Fragment{
 	private FirstPageBean bean;
@@ -37,7 +38,7 @@ public class FistPagerItemFragment extends Fragment{
 			public void onClick(View v) {
 				LogUtil.d("FistPagerItemFragment", "onClick.....");
 				if("ACTIVITY".equalsIgnoreCase(bean.getType())){//活动相关
-					
+					Toast.makeText(getActivity(), R.string.not_open, Toast.LENGTH_SHORT).show();
 				}else if("VIDEO".equalsIgnoreCase(bean.getType())){//首播，点击进去显示MV描述，相关MV
 					Intent intent = new Intent();
 					intent.putExtra("id", bean.getId());
@@ -56,6 +57,10 @@ public class FistPagerItemFragment extends Fragment{
 					intent.putExtra("isRelativeVideo", false);
 					intent.setClass(getActivity(), DetailActivity.class);
 					getActivity().startActivity(intent);
+				}else if("AD".equalsIgnoreCase(bean.getType())){
+					Toast.makeText(getActivity(), R.string.not_open, Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(getActivity(), R.string.not_open, Toast.LENGTH_SHORT).show();
 				}
 			}
 		});

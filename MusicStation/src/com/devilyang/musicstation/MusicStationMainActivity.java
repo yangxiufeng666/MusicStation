@@ -2,16 +2,19 @@ package com.devilyang.musicstation;
 
 import com.devilyang.musicstation.fragment.FistPageFragment;
 import com.devilyang.musicstation.fragment.MVBaseFragment;
-import com.devilyang.musicstation.fragment.MVPageFragment;
 import com.devilyang.musicstation.fragment.VChartFragment;
 import com.devilyang.musicstation.fragment.YueDanFragment;
 import com.devilyang.musicstation.util.URLProviderUtil;
 import com.devilyang.musicstation.util.Util;
 import com.devilyang.musicstation.widget.FragmentTabHost;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -95,6 +98,6 @@ public class MusicStationMainActivity extends FragmentActivity {
 			return;
 		}
 		super.onBackPressed();
-
 	}
+
 }

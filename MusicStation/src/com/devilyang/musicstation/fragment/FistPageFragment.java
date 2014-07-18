@@ -134,14 +134,22 @@ public class FistPageFragment extends BaseFragment {
 		}
 		if("ACTIVITY".equalsIgnoreCase(firstBeans.get(index).getType())){//活动相关
 			catImg.setImageResource(R.drawable.home_page_activity);
+			catImg.setVisibility(View.VISIBLE);
 		}else if("VIDEO".equalsIgnoreCase(firstBeans.get(index).getType())){//首播，点击进去显示MV描述，相关MV
 			catImg.setImageResource(R.drawable.home_page_video);
+			catImg.setVisibility(View.VISIBLE);
 		}else if("WEEK_MAIN_STAR".equalsIgnoreCase(firstBeans.get(index).getType())){//(悦单)点击进去跟显示悦单详情一样
 			catImg.setImageResource(R.drawable.home_page_star);
+			catImg.setVisibility(View.VISIBLE);
 		}else if("PLAYLIST".equalsIgnoreCase(firstBeans.get(index).getType())){//(悦单)点击进去跟显示悦单详情一样
 			catImg.setImageResource(R.drawable.home_page_playlist);
+			catImg.setVisibility(View.VISIBLE);
+		}else if("AD".equalsIgnoreCase(firstBeans.get(index).getType())) {
+			catImg.setImageResource(R.drawable.home_page_ad);
+			catImg.setVisibility(View.VISIBLE);
 		}else{
-			catImg.setImageResource(R.drawable.home_page_video);
+			catImg.setImageResource(R.drawable.home_page_ad);
+			catImg.setVisibility(View.INVISIBLE);
 		}
 		titleTxt.setText(firstBeans.get(index).getTitle());
 		authorTxt.setText(firstBeans.get(index).getDescription());

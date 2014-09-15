@@ -32,7 +32,6 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,6 +43,7 @@
         <activity android:name="com.devilyang.musicstation.VideoViewPlayerActivity"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"></activity>
-    </application>
+   		<meta-data android:name="UMENG_CHANNEL" android:value="10086" />
+        </application>
 
 </manifest>

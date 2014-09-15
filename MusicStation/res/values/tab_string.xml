@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="tab_indicator_name">
-        <item>推荐</item>
+        <item>首页</item>
         <item>MV</item>
         <item>排行榜</item>
-        <item>乐单</item>
+        <item>悦单</item>
     </string-array>
 </resources>

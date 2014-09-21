@@ -1,29 +1,9 @@
 package com.devilyang.musicstation.fragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.android.volley.Response;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.devilyang.musicstation.DetailActivity;
-import com.devilyang.musicstation.R;
-import com.devilyang.musicstation.R.layout;
-import com.devilyang.musicstation.adapter.YueDanMainListAdapter;
-import com.devilyang.musicstation.bean.YueDanListBean;
-import com.devilyang.musicstation.bean.YueDanListBean.PlayLists;
-import com.devilyang.musicstation.cache.CacheManager;
-import com.devilyang.musicstation.net.LogUtil;
-import com.devilyang.musicstation.pullrefresh.PullToRefreshBase;
-import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.Mode;
-import com.devilyang.musicstation.pullrefresh.PullToRefreshListView;
-import com.devilyang.musicstation.util.URLProviderUtil;
-import com.devilyang.musicstation.util.Util;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,14 +12,32 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.devilyang.musicstation.DetailActivity;
+import com.devilyang.musicstation.R;
+import com.devilyang.musicstation.adapter.YueDanMainListAdapter;
+import com.devilyang.musicstation.bean.YueDanListBean;
+import com.devilyang.musicstation.cache.CacheManager;
+import com.devilyang.musicstation.net.LogUtil;
+import com.devilyang.musicstation.pullrefresh.PullToRefreshBase;
+import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.Mode;
+import com.devilyang.musicstation.pullrefresh.PullToRefreshListView;
+import com.devilyang.musicstation.swinginadapters.SwingBottomInAnimationAdapter;
+import com.devilyang.musicstation.util.URLProviderUtil;
+import com.devilyang.musicstation.util.Util;
 
 public class YueDanFragment extends BaseFragment{
 	private static final String TAG  = "YueDanFragment";
@@ -109,7 +107,12 @@ public class YueDanFragment extends BaseFragment{
 		mPullToRefreshListView.setScrollingWhileRefreshingEnabled(false);
 		ListView actualList = mPullToRefreshListView.getRefreshableView();
 		adapter = new YueDanMainListAdapter(playLists, getActivity());
-		actualList.setAdapter(adapter);
+//		actualList.setAdapter(adapter);
+		SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+		swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+		swingBottomInAnimationAdapter.setAbsListView(actualList);
+
+		actualList.setAdapter(swingBottomInAnimationAdapter);
 		actualList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

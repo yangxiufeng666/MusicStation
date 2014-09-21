@@ -5,6 +5,21 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
@@ -19,28 +34,11 @@ import com.devilyang.musicstation.bean.MVListBean.Videos;
 import com.devilyang.musicstation.cache.CacheManager;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshBase;
-import com.devilyang.musicstation.pullrefresh.PullToRefreshListView;
 import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.Mode;
-import com.devilyang.musicstation.pullrefresh.PullToRefreshBase.OnLastItemVisibleListener;
+import com.devilyang.musicstation.pullrefresh.PullToRefreshListView;
+import com.devilyang.musicstation.swinginadapters.SwingBottomInAnimationAdapter;
 import com.devilyang.musicstation.util.URLProviderUtil;
 import com.devilyang.musicstation.util.Util;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.text.format.DateUtils;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class MVPageFragment extends BaseFragment{
 	
@@ -174,7 +172,13 @@ public class MVPageFragment extends BaseFragment{
 		mPullRefreshListView.setMode(Mode.PULL_FROM_END);
 		mPullRefreshListView.setScrollingWhileRefreshingEnabled(false);
 		adapter = new MVListAdapter(videosList, getActivity());
-		actualListView.setAdapter(adapter);
+//		actualListView.setAdapter(adapter);
+		SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
+				adapter);
+		swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+		swingBottomInAnimationAdapter.setAbsListView(actualListView);
+
+		actualListView.setAdapter(swingBottomInAnimationAdapter);
 		actualListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

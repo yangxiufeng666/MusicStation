@@ -38,6 +38,7 @@ import com.devilyang.musicstation.bean.VChartPeriodBean.Periods;
 import com.devilyang.musicstation.cache.CacheManager;
 import com.devilyang.musicstation.net.LogUtil;
 import com.devilyang.musicstation.net.RequestManager;
+import com.devilyang.musicstation.swinginadapters.SwingBottomInAnimationAdapter;
 import com.devilyang.musicstation.util.URLProviderUtil;
 import com.devilyang.musicstation.util.Util;
 
@@ -86,7 +87,13 @@ public class VChartPagerFragment extends BaseFragment {
 		periodTxt = (TextView)v.findViewById(R.id.vchart_period);
 		progressBar = (ProgressBar)v.findViewById(R.id.vchart_list_progress);
 		listAdapter = new VChartListAdapter(getActivity(),videos);
-		vchartList.setAdapter(listAdapter);
+//		vchartList.setAdapter(listAdapter);
+		SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
+				listAdapter);
+		swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+		swingBottomInAnimationAdapter.setAbsListView(vchartList);
+
+		vchartList.setAdapter(swingBottomInAnimationAdapter);
 		leftPeriod = (ImageView)v.findViewById(R.id.vchart_left_period);
 		rightPeriod = (ImageView)v.findViewById(R.id.vchart_right_period);
 		leftPeriod.setOnClickListener(new View.OnClickListener() {

@@ -10,6 +10,7 @@ import com.devilyang.musicstation.bean.PeopleYueDanListBean;
 import com.devilyang.musicstation.bean.PlayInfoBean;
 import com.devilyang.musicstation.bean.RelatedVideosListBean;
 import com.devilyang.musicstation.interfaces.DetailDataChangeInterface;
+import com.devilyang.musicstation.swinginadapters.SwingBottomInAnimationAdapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -67,6 +68,12 @@ public class DetailListFragment extends Fragment{
 		}
 		adapter = new DetailListAdapter(objects, getActivity(), isRelative);
 		listView.setAdapter(adapter);
+		SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
+				adapter);
+		swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+		swingBottomInAnimationAdapter.setAbsListView(listView);
+
+		listView.setAdapter(swingBottomInAnimationAdapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

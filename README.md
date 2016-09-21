@@ -1,3 +1,6 @@
+#Deprecated
+请看新项目：https://github.com/babylikebird/YinYueTai
+
 # MusicStation
 这个应用是我抓取音悦台数据来完成的，主要是觉得广告太TMD的烦人了，就抓取了数据（有兴趣的同学可以尝试一下）。
 里面用到了一些开源项目，如volley，vitamio,[ListViewAnimations](https://github.com/nhaarman/ListViewAnimations)等。
